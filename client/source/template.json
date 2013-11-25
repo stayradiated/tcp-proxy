@@ -1,0 +1,8 @@
+{
+  "message": [
+    "<li class=\"message {{ type }}\">",
+      "<span class=\"id\">{{ id }}</span>",
+      "<div class=\"content\">{{ content }}</div>"
+    "</li>"
+  ]
+}

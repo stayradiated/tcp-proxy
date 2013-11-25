@@ -1,0 +1,68 @@
+
+body {
+  margin: 0;
+}
+
+h1 {
+  text-align: center;
+  font: 20px/60px "Lucida Grande";
+  background: rgba(29, 31, 33, 1.0);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+.log {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.log ul {
+  padding: 0;
+}
+
+.message {
+  font: 14px/20px tamzen7x14;
+  list-style-type: none;
+  margin: 0 0 5px 0;
+  padding: 0;
+}
+
+.message .id {
+  color: #fff;
+  position: absolute;
+  height: 20px;
+  width: 30px;
+  text-align: center;
+}
+
+.message.upstream .content {
+  background: rgba(46, 204, 113, 0.1);
+  border-color: #2ECC71;
+}
+
+.message.downstream .content {
+  border-color: #3498DB;
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.message .content {
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  border-right: 1px solid #fff;
+  border-left: 30px solid #fff;
+  padding-left: 10px;
+  white-space: pre-wrap;
+  overflow: hidden;
+  max-height: 100px;
+}
+
+.message.expanded .content {
+  max-height: none;
+}

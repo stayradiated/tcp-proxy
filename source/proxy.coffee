@@ -1,8 +1,8 @@
 
 net = require 'net'
+{EventEmitter} = require 'events'
 
-class Proxy
-
+class Proxy extends EventEmitter
 
   ###*
    * options
@@ -11,43 +11,46 @@ class Proxy
   ###
 
   constructor: (options) ->
-
+    @paused = no
     @host = options.host
     @target = options.target
 
-    @server = net.createServer()
-
-    @server.on 'connection', @handleConnection
-
-    @server.on 'close', ->
-      console.log 'socket closed'
-
-    @server.listen @host
-
-
   handleConnection: (input) =>
-
-    console.log 'socket connected', input.remoteAddress
-
+    @emit 'connection', input.remoteAddress
     output = net.createConnection @target
 
     input.on 'data', (data) =>
-      @log 'upstream', data
+      return if @paused
+      @emit 'upstream', data
 
     input.on 'close', (data) =>
-      @log 'input close'
+      return if @paused
+      @emit 'close', 'input'
 
     output.on 'data', (data) =>
-      @log 'downstream', data
+      return if @paused
+      @emit 'downstream', data
 
     output.on 'close', (data) =>
-      @log 'output close'
+      return if @paused
+      @emit 'close', 'output'
 
-    # Hook up the pipes!
     input.pipe(output)
     output.pipe(input)
 
-  log: (message, data) =>
-    console.log Date.now(), message
+  pauseLog: =>
+    @paused = yes
+
+  resumeLog: =>
+    @paused = no
+
+  stop: =>
+    @server.close()
+
+  start: =>
+    @server = net.createServer()
+    @server.on 'connection', @handleConnection
+    @server.on 'close', => @emit 'close', 'server'
+    @server.listen @host
 
 module.exports = Proxy
