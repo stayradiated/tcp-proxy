@@ -15,7 +15,12 @@ events.forEach (event) ->
       when 'utf-8'
         socket.emit event, data.toString 'utf-8'
       when 'binary'
-        socket.emit event, 'binary :: ' + data.length + ' ' + data[0] + ' ' + data[data.length - 1]
+        text = "binary :: #{ data.length } :: "
+        hex = data.toString 'hex'
+        len = Math.min hex.length - 1, 256
+        for byte in [0..len] by 2
+          text += hex[byte] + hex[byte + 1] + ' '
+        socket.emit event, text
 
 # Start the app
 server.listen 8090
