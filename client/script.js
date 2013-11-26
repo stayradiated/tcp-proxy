@@ -43,17 +43,46 @@
         Socket = require('./socket');
         Message = require('./views/message');
         return document.addEventListener('DOMContentLoaded', function() {
-          var logEl, render, socket;
+          var buttonStart, buttonStop, inputHost, inputTarget, logEl, render, socket;
           socket = new Socket();
-          console.log('started socket');
+          socket.on('connect', function() {
+            if (inputHost.value) {
+              socket.emit('set-host', inputHost.value);
+            }
+            if (inputTarget.value) {
+              return socket.emit('set-target', inputTarget.value);
+            }
+          });
+          inputHost = document.getElementById('input-host');
+          inputTarget = document.getElementById('input-target');
+          if (localStorage.host) {
+            inputHost.value = localStorage.host;
+          }
+          if (localStorage.target) {
+            inputTarget.value = localStorage.target;
+          }
+          inputHost.addEventListener('input', function() {
+            localStorage.host = inputHost.value;
+            return socket.emit('set-host', inputHost.value);
+          });
+          inputTarget.addEventListener('input', function() {
+            localStorage.target = inputTarget.value;
+            return socket.emit('set-target', inputTarget.value);
+          });
+          buttonStart = document.getElementById('button-start');
+          buttonStop = document.getElementById('button-stop');
+          buttonStart.addEventListener('click', function() {
+            return socket.emit('start');
+          });
+          buttonStop.addEventListener('click', function() {
+            return socket.emit('stop');
+          });
           logEl = document.querySelector('.log ul');
           logEl.addEventListener('click', function(event) {
             var target;
             target = event.target;
             while (target !== logEl) {
-              console.log(target);
               if (target.classList.contains('message')) {
-                console.log('found it');
                 target.classList.toggle('expanded');
                 return;
               }
@@ -84,11 +113,16 @@
       }, function(require, module, exports) {
         var Socket;
         Socket = (function() {
-          function Socket() {
+          function Socket(fn) {
             this.on = __bind(this.on, this);
             this.emit = __bind(this.emit, this);
+            this.onConnect = __bind(this.onConnect, this);
             this.socket = io.connect('http://localhost:8090');
           }
+
+          Socket.prototype.onConnect = function() {
+            return console.log('Successfully connected to server');
+          };
 
           Socket.prototype.emit = function() {
             return this.socket.emit.apply(this.socket, arguments);
@@ -138,14 +172,19 @@
             this.type = type;
             this.content = content;
             this.render = __bind(this.render, this);
+            this.escape = __bind(this.escape, this);
             this.id = this.getId();
           }
+
+          Message.prototype.escape = function() {
+            return this.content.replace(/\</gi, '&lt').replace(/\>/gi, '&gt');
+          };
 
           Message.prototype.render = function() {
             return template({
               id: this.id,
               type: this.type,
-              content: this.content
+              content: this.escape()
             });
           };
 

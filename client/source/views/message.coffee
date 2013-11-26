@@ -22,10 +22,15 @@ class Message
   constructor: (@type, @content) ->
     @id = @getId()
 
+  escape: =>
+    @content
+      .replace(/\</gi, '&lt')
+      .replace(/\>/gi, '&gt')
+
   render: =>
     template
       id: @id
       type: @type
-      content: @content
+      content: @escape()
 
 module.exports = Message

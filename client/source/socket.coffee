@@ -1,8 +1,11 @@
 
 class Socket
 
-  constructor: ->
+  constructor: (fn) ->
     @socket = io.connect('http://localhost:8090')
+
+  onConnect: =>
+    console.log 'Successfully connected to server'
 
   emit: =>
     @socket.emit.apply(@socket, arguments)

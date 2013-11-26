@@ -5,16 +5,44 @@ document.addEventListener 'DOMContentLoaded', ->
 
   socket = new Socket()
 
-  console.log 'started socket'
+  socket.on 'connect', ->
+    if inputHost.value
+      socket.emit 'set-host', inputHost.value
+    if inputTarget.value
+      socket.emit 'set-target', inputTarget.value
+
+  inputHost = document.getElementById 'input-host'
+  inputTarget = document.getElementById 'input-target'
+
+  if localStorage.host
+    inputHost.value = localStorage.host
+
+  if localStorage.target
+    inputTarget.value = localStorage.target
+
+  inputHost.addEventListener 'input', ->
+    localStorage.host = inputHost.value
+    socket.emit 'set-host', inputHost.value
+
+  inputTarget.addEventListener 'input', ->
+    localStorage.target = inputTarget.value
+    socket.emit 'set-target', inputTarget.value
+
+  buttonStart = document.getElementById 'button-start'
+  buttonStop = document.getElementById 'button-stop'
+
+  buttonStart.addEventListener 'click', ->
+    socket.emit 'start'
+
+  buttonStop.addEventListener 'click', ->
+    socket.emit 'stop'
 
   logEl = document.querySelector '.log ul'
 
   logEl.addEventListener 'click', (event) ->
     target = event.target
     while target isnt logEl
-      console.log target
       if target.classList.contains 'message'
-        console.log 'found it'
         target.classList.toggle 'expanded'
         return
       target = target.parentElement

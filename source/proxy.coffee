@@ -10,10 +10,15 @@ class Proxy extends EventEmitter
    *   - host: Where to host the proxy
   ###
 
-  constructor: (options) ->
+  constructor: ->
+    @closed = yes
     @paused = no
-    @host = options.host
-    @target = options.target
+
+  setHost: (@host) =>
+    console.log '[proxy] set host'
+
+  setTarget: (@target) =>
+    console.log '[proxy] set target'
 
   handleConnection: (input) =>
     @emit 'connection', input.remoteAddress
@@ -35,19 +40,39 @@ class Proxy extends EventEmitter
       return if @paused
       @emit 'close', 'output'
 
+    input.on 'error', (err) =>
+      console.error 'input', err
+
+    output.on 'error', (err) =>
+      console.error 'output', err
+
     input.pipe(output)
     output.pipe(input)
 
   pauseLog: =>
+    console.log '[proxy] pausing'
     @paused = yes
 
   resumeLog: =>
+    console.log '[proxy] resuming'
     @paused = no
 
   stop: =>
+    if @closed then return
+    console.log '[proxy] stopping'
+    @closed = yes
     @server.close()
 
   start: =>
+    if not @closed then return
+    @closed = no
+
+    if not (@host and @target)
+      console.log '[proxy] cannot start without host and target'
+      return
+    else
+      console.log '[proxy] starting'
+
     @server = net.createServer()
     @server.on 'connection', @handleConnection
     @server.on 'close', => @emit 'close', 'server'
