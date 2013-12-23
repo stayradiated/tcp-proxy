@@ -1,0 +1,31 @@
+{
+  "name": "TCP-Proxy",
+  "version": "0.0.1",
+  "description": "Inspect messages over a TCP connection",
+  "main": "source/index.coffee",
+  "dependencies": {
+    "coffee-scrunch": "~0.1.4",
+    "express": "~3.4.4",
+    "jandal": "~0.0.1",
+    "sockjs": "~0.3.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "cake server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stayradiated/tcp-proxy.git"
+  },
+  "keywords": [
+    "TCP",
+    "Log",
+    "Proxy"
+  ],
+  "author": "George Czabania",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/stayradiated/tcp-proxy/issues"
+  },
+  "homepage": "https://github.com/stayradiated/tcp-proxy"
+}

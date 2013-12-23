@@ -20,19 +20,11 @@ document.addEventListener 'DOMContentLoaded', ->
   if localStorage.target
     inputTarget.value = localStorage.target
 
-  inputHost.addEventListener 'input', ->
-    localStorage.host = inputHost.value
-    socket.emit 'set-host', inputHost.value
-
-  inputTarget.addEventListener 'input', ->
-    localStorage.target = inputTarget.value
-    socket.emit 'set-target', inputTarget.value
-
   buttonStart = document.getElementById 'button-start'
   buttonStop = document.getElementById 'button-stop'
 
   buttonStart.addEventListener 'click', ->
-    socket.emit 'start'
+    socket.emit 'start', inputHost.value, inputTarget.value
 
   buttonStop.addEventListener 'click', ->
     socket.emit 'stop'

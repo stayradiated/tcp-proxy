@@ -37,5 +37,6 @@ task 'build', ->
   init new Scrunch
     path: input
     compile: true
+    verbose: true
 
 

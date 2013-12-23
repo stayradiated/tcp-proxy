@@ -25,7 +25,6 @@ events.forEach (event) ->
 # Start the app
 server.listen 8090
 
-
 # Get the encoding of a buffer
 getEncoding = (buffer) ->
   # Prepare

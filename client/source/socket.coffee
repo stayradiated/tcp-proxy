@@ -1,16 +1,26 @@
+require './vendor/sockjs'
+Jandal = require 'jandal'
+
+Jandal.handle 'sockjs'
 
 class Socket
 
   constructor: (fn) ->
-    @socket = io.connect('http://localhost:8090')
+    sock = new SockJS 'http://localhost:8090/ws'
+    console.log sock
+    sock.onopen    = @open
+    @sock = new Jandal(sock)
 
-  onConnect: =>
+  open: =>
     console.log 'Successfully connected to server'
 
-  emit: =>
-    @socket.emit.apply(@socket, arguments)
+  message: (e) =>
+    console.log 'message', e.data
 
-  on: =>
-    @socket.on.apply(@socket, arguments)
+  emit: =>
+    @sock.emit.apply(@sock, arguments)
+
+  on: (event, fn) =>
+    @sock.on(event, fn)
 
 module.exports = Socket

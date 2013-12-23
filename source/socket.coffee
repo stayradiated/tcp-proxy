@@ -1,23 +1,28 @@
-SocketIo = require 'socket.io'
+sockjs = require 'sockjs'
+Jandal = require 'jandal'
+
+Jandal.handle 'node'
 
 class SocketHandler
 
   constructor: (server, proxy) ->
-    @io = SocketIo.listen(server)
-    @io.set 'log level', 1
-    @io.sockets.on 'connection', (socket) ->
-      new Socket(socket, proxy)
+    @sockets = []
+    @conn = sockjs.createServer()
+    @conn.installHandlers server, prefix: '/ws'
+    @conn.on 'connection', (socket) =>
+      jandal = new Jandal(socket)
+      @sockets.push jandal
+      new Socket(jandal, proxy)
 
   emit: (key, value) =>
-    @io.sockets.emit(key, value)
+    for sock in @sockets
+      sock.emit key, value
 
 
 class Socket
 
   events:
     'msg': 'message'
-    'set-host': 'setHost'
-    'set-target': 'setTarget'
     'start': 'start'
     'stop': 'stop'
 
@@ -28,13 +33,9 @@ class Socket
   message: (data) =>
     console.log data
 
-  setHost: (host) =>
+  start: (host, target) =>
     @proxy.setHost host
-
-  setTarget: (target) =>
     @proxy.setTarget target
-
-  start: =>
     @proxy.start()
 
   stop: =>
