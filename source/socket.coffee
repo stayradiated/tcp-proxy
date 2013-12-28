@@ -6,18 +6,14 @@ Jandal.handle 'node'
 class SocketHandler
 
   constructor: (server, proxy) ->
-    @sockets = []
     @conn = sockjs.createServer()
     @conn.installHandlers server, prefix: '/ws'
     @conn.on 'connection', (socket) =>
       jandal = new Jandal(socket)
-      @sockets.push jandal
       new Socket(jandal, proxy)
 
   emit: (key, value) =>
-    for sock in @sockets
-      sock.emit key, value
-
+    Jandal.all.emit key, value
 
 class Socket
 
