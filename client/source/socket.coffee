@@ -1,5 +1,5 @@
 require './vendor/sockjs'
-Jandal = require 'jandal'
+Jandal = require 'jandal/build/client'
 
 Jandal.handle 'sockjs'
 
